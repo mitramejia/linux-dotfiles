@@ -9,19 +9,22 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
-for_window [class="^.*"] border pixel 1
+for_window [class="^.*"] border pixel 0
+gaps inner 16
 
 set $mod Mod4
 # set $mod Mod1
 
 exec --no-startup-id picom
-exec --no-startup-id feh --bg-scale ~/backgrounds/nice-blue-background.png
 exec --no-startup-id xrdb -merge ~/.Xresources
 exec_always --no-startup-id setxkbmap -option ctrl:nocaps
 
 # kill any hanging polybar processes
 exec_always killall polybar
 exec_always --no-startup-id ~/.config/polybar/launch_polybar.sh
+
+exec xrandr --output DisplayPort-2 --rotate right
+exec --no-startup-id feh --bg-fill ~/wallpapers/mountains.png --bg-center ~/wallpapers/beach.jpg
 
 bindsym Print exec maim "/home/$USER/Pictures/$(date).jpg"
 bindsym $mod+Print exec maim --window $(xdotool getactivewindow) "/home/$USER/Pictures/$(date).jpg"
@@ -34,7 +37,7 @@ bindsym Ctrl+Shift+Print exec maim --select | xclip -selection clipboard -t imag
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:MesloLGS Nerd Font Mono Bold 14
+font pango: JetBrainsMono Nerd Font Bold 24
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -68,15 +71,15 @@ bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec alacritty
-
+bindsym $mod+Return exec wezterm
+bindsym $mod+Shift+Return exec brave
 # kill focused window
-bindsym $mod+Shift+q kill
+bindsym $mod+q kill
 
 # start rofi (a program launcher)
-bindsym $mod+d exec --no-startup-id rofi -show drun
-bindsym $mod+space exec --no-startup-id rofi -show combi
-bindsym $mod+Tab exec --no-startup-id rofi -show window
+# bindsym $mod+d exec --no-startup-id rofi -show drun
+# bindsym $mod+space exec --no-startup-id rofi -show combi
+# bindsym $mod+Tab exec --no-startup-id rofi -show window
 
 # change focus
 bindsym $mod+h focus left
@@ -119,18 +122,52 @@ bindsym $mod+a focus parent
 # focus the child container
 #bindsym $mod+d focus child
 
+
+###############################################################################
+#  Workspaces
+###############################################################################
+
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1"
-set $ws2 "2"
-set $ws3 "3"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6"
-set $ws7 "7"
+set $ws1 "1.󰾔 Browsers"
+set $ws2 "2.󰆍 Terminals"
+set $ws3 "3.󰅨 IDE"
+set $ws4 "4.󰅨 IDE"
+set $ws5 "5.󰭻 Chats"
+set $ws6 "6.󱃔 Tasks"
+set $ws7 "7.󰎄 Music"
 set $ws8 "8"
 set $ws9 "9"
-set $ws10 "10"
+set $ws10 "10.󰆍 Terminals"
+
+bindsym $mod+Tab workspace back_and_forth
+for_window [urgent=latest] focus
+
+
+# Assign workspaces to apps 
+assign [class="Brave" instance="brave"] $ws1
+# IDE
+assign [class="jetbrains-webstorm" instance="jetbrains-webstorm"] $ws3
+assign [class="jetbrains-rider" instance="jetbrains-rider"] $ws4
+# Chat
+assign [class="WhatSie" instance="whatsie"] $ws5
+assign [class="Slack" instance="slack"] $ws5
+# Tasks
+assign [class="obsidian" instance="obsidian"] $ws6
+assign [class="Morgen" instance="morgen"] $ws6
+# Music
+assign [class="Cider" instance="cider"] $ws7
+
+workspace $ws1 output DisplayPort-1
+workspace $ws2 output DisplayPort-1
+workspace $ws3 output DisplayPort-1
+workspace $ws4 output DisplayPort-1
+workspace $ws5 output DisplayPort-1
+workspace $ws6 output DisplayPort-1
+workspace $ws7 output DisplayPort-1
+workspace $ws8 output DisplayPort-1
+workspace $ws9 output DisplayPort-1
+workspace $ws10 output DisplayPort-2
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
@@ -156,12 +193,26 @@ bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
 
+
+###############################################################################
+# Start applications
+###############################################################################
+exec brave
+exec wezterm
+exec webstorm
+exec cider
+exec whatsie
+exec obsidian
+exec slack
+exec morgen
+
 # reload the configuration file
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
